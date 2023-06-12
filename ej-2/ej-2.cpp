@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-
+#include <queue>
 using namespace std;
 vector<vector<int>> N; // Red de flujo. La usamos para iterar por todas las aristas en O(m)
 vector<vector<int>> capacitado; //matriz de capacidades. En una posición ij el valor  es
@@ -8,6 +8,27 @@ vector<vector<int>> capacitado; //matriz de capacidades. En una posición ij el 
                                 // y 1 si lo tiene
 vector<vector<int>> R;          // red residual
 vector<bool> marcados;          // vector de booleanos para el dfs
+
+bool BFS_aumento(vector<int>&CDA) {
+    CDA[0] = -2;
+    queue<int> q;
+    q.push(0);
+
+    while (!q.empty()) {
+        int cur = q.front();
+        q.pop();
+
+        for (int next : N[cur]) {
+            if (CDA[next] == -1 && !capacitado[cur][next]) {
+                CDA[next] = cur;
+                if (next == CDA.size() - 1) return true;
+                q.push(next);
+            }
+        }
+    }
+
+    return false;
+}
 
 void DFS_aumento(vector<int>&CDA, int v) {
     marcados[v] = true;
@@ -32,14 +53,13 @@ void armar_camino(vector<int>&CDA) {
 }
 
 int corte_minimo() {
-    while (true) {
-        R = {{}};
-        R.resize(N.size(), {});
-        marcados = {};
-        marcados.resize(N.size(), false);
-        vector<int> caminoDeAumento{};
-        caminoDeAumento.resize(N.size(), -1);
-        for (int i = 0; i < N.size(); i++) {    //Armamos la red de aumento de acuerdo a su definicion
+    int discomformidad = 0;
+    vector<int> caminoDeAumento;
+    caminoDeAumento.resize(N.size(), -1);
+    while (BFS_aumento(caminoDeAumento)) {
+        //R = {{}};
+        //R.resize(N.size(), {});
+        /*for (int i = 0; i < N.size(); i++) {    //Armamos la red de aumento de acuerdo a su definicion
             for (int j = 0; j < N[i].size(); j++) {
                 if (!capacitado[i][N[i][j]]) R[i].push_back(N[i][j]);
                 if (capacitado[i][N[i][j]]) R[N[i][j]].push_back(i);
@@ -60,8 +80,19 @@ int corte_minimo() {
             int dest = caminoDeAumento[i];      // de aumento
             if (capacitado[origen][dest] == 0) capacitado[origen][dest] = 1;
             if (capacitado[dest][origen] != -1) capacitado[dest][origen] = 0;
+        } */
+    discomformidad++;
+    int cur = caminoDeAumento.size()-1;
+    while (cur != 0) {
+        int prev = caminoDeAumento[cur];
+        capacitado[prev][cur] = 1;
+        capacitado[cur][prev] = 0;
+        cur = prev;
         }
+    caminoDeAumento = {};
+    caminoDeAumento.resize(N.size(), -1);
     }
+    return discomformidad;
 }
 
 int main() {
