@@ -2,7 +2,7 @@
 \ProvidesClass{informe}
 %\DeclareOption{handout}{\PassOptionsToClass{\CurrentOption}{amsart}}
 %\ProcessOptions\relax
-\LoadClass[12pt, oneside]{amsart}
+\LoadClass[12pt, oneside,reqno]{amsart}
 \RequirePackage[margin=1in]{geometry} 
 \RequirePackage{lmodern, enumitem, needspace}
 \RequirePackage{graphicx, wrapfig, pgffor, ifthen}

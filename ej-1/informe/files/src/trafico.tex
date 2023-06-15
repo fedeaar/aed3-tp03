@@ -1,31 +1,85 @@
 % el problema
-El problema del \textit{trafico} que consideraremos tiene la siguiente premisa. Dado una ciudad representada por $n$ puntos conectados por $m$ calles unidireccionales, dos puntos críticos $s$ y $t$, y un conjunto
+El problema del \textit{tráfico} que consideraremos tiene la siguiente premisa. Dado una ciudad representada por $n$ puntos conectados por $m$ calles unidireccionales, dos puntos críticos $s$ y $t$, y un conjunto
 \begin{equation*}
     P := \{p_1 \ ... \ p_k\}    
 \end{equation*}
-de $k$ calles bidireccionales candidatas, queremos saber por cuánto podemos mejorar la distancia mínima entre $s$ y $t$, de construir una de estas calles.
+de $k$ calles bidireccionales candidatas, queremos saber cuál es la mínima distancia que deberíamos recorrer para llegar de $s$ a $t$, de construir alguna de estas calles.
 
 Para ello, vamos a contar con la longitud $l_i$, $1 \leq i \leq n$ de cada calle en la ciudad y la longitud $l_j$, $1 \leq j \leq k$ de cada calle candidata.
 
-Por ejemplo, si tuvieramos la siguiente ciudad, puntos críticos $s = 1$ y $t = 4$ y las calles candidatas marcadas en gris
+Por ejemplo, si tuvieramos la siguiente ciudad, cuyas calles candidatas están en color gris, y los puntos críticos $s = 1$ y $t = 4$
+
 \begin{figure}[!htbp]
     \includegraphics[scale=0.6, trim={0.2cm 0.2cm 0.2cm 0.2cm}, clip]{/files/src/.media/grafo.png} 
     %\caption{s} \label{ejemplo}
 \end{figure}
     
-\noindent podríamos construir la calle $2 \leftrightarrow 3$ con peso $5$ para lograr una distancia mínima de largo $35$.
+\noindent entonces podríamos construir la calle $2 \leftrightarrow 3$ con peso $5$ para lograr un camino $1 \to 2 \to 3 \to 4$ de largo $35$.
 
 % modelado
-\subsection{Modelado como un problema de camino mínimo}\label{modelo}
+\subsection{Modelado como un problema de camino mínimo}\label{modelo} 
 
-% optimalidad
-\subsection{Demostración de optimalidad}
+A partir del ejemplo anterior, vemos que el problema del \textit{tráfico} se puede modelar de manera intuitiva como un problema de \textit{camino minimo} en grafos: dada una ciudad, representada por un conjunto $V$ de $n$ puntos y un conjunto $E$ de $m$ calles ---donde cada calle conecta a dos puntos en $V$ y tiene una longitud asociada---, y un conjunto $P$ de calles candidatas, podemos modelar la ciudad como un digrafo $D = (V,\ E)$ con función de peso $w: E \to \mathbb{R}_{\geq 0}$ y evaluar el camino mínimo entre $s$ y $t$ para la sucesión de digrafos
+\begin{equation}\label{eq_1}
+    \{D\} \cup \{(V,\ E \cup \{e,\ \bar{e}\}) : e \in P\}
+\end{equation}
+para resolver el problema.
 
-% correctitud
-\subsection{Demostración de correctitud}\label{correctitud} 
+Sin embargo, esto no es eficiente. De emplear el algoritmo de \textit{Dijkstra}, la complejidad resultante de peor caso estaría en $O(k\cdot m\log n)$. Vamos a ver cómo lo podemos mejorar. 
 
 % algoritmo
-\subsection{El algoritmo} 
+\subsection{El algoritmo}
 
+Notar primero que el camino mínimo entre dos vértices $s$ y $t$ satisface la propiedad de \textit{subestructura óptima}\footnote{Ver Thomas H. Cormen; Charles E. Leiserson; Ronald L. Rivest y Clifford Stein. Introduction to algorithms.
+2009. Sección 16.2: \textit{Elements of a greedy strategy}.}. Esto es, cada sección del camino forma, a su vez, un camino mínimo\footnote{Si no, podríamos reemplazar esta sección por otra de menor distancia, lo que es una contradicción.}. 
+
+Sigue que, si $\delta_D : E \to \mathbb{R}$ es la distancia mínima entre cualquier par de vértices en un digrafo $D = (V,\ E)$ con función de peso $w: E \to \mathbb{R}$ que no tiene ciclos negativos, entonces para cualquier par de vértices $s$ y $t$ en $V$, para los cuales existe un camino $s \rightsquigarrow t$, y una arista $(u,\ v)$ perteneciente a este camino, $\delta_D(s,\ t) = \delta_D(s,\ u) + w(u,\ v) + \delta_D(v,\ t)$.
+
+Vamos a demostrar en la siguiente sección que un corolario de esta observación es que, de agregar una arista $e = (p,\ q)$ a $D$ con peso $\ell$ no negativo, entonces 
+\begin{equation}\label{eq_2}
+    \delta_{D + e}(s,\ t) = \min\{\delta_{D}(s,\ p) + \ell + \delta_{D}(q,\ t),\ \delta_{D}(s,\ t)\}.
+\end{equation}
+
+En particular, dado que $\delta_D(s,\ t) = \delta_{D^t}(t,\ s)$\footnote{ Notar que los caminos en un digrafo son \textit{dirigidos}. Luego, las distancias son simétricas respecto al digrafo transpuesto.} y que nuestro problema se restringe a pesos no negativos, estas observaciones nos permiten considerar el siguiente algoritmo.
+
+\lstinputlisting[mathescape=true, language=pseudo, label=trafico, caption={Pseudocódigo para el problema del \textit{tráfico}.}]{files/src/.code/trafico.pseudo}
+
+El mismo aplica un algoritmo de \textit{camino mínimo a partir de una  única fuente} sobre el grafo de entrada $D$, a partir de $s$, y sobre el grafo transpuesto $D^t$, a partir de $t$, para saber la distancia mínima de ambos vértices ---que se guarda en los diccionarios $\delta^s$ y $\delta^t$--- a todo el resto de los vértices en el grafo. Luego, aplica la ecuación \ref{eq_2} para determinar cuál es la distancia mínima entre $s$ y $t$ en cada par de digrafos $(D + e,\ D + \bar{e})$\footnote{Esto es equivalente a considerar el digrafo $D + \{e,\ \bar{e}\}$, ya que ambas aristas no pueden pertenecer a un mismo camino. Esto se debe a que, si ambas aristas pertenecieran en simultáneo a un recorrido, entonces habría un ciclo en el mismo.} para cada calle bidireccional $e$ en $P$.
+
+% correctitud
+\subsection{Demostración de correctitud}\label{correctitud}  
+
+Dada la discusión anterior, basta demostrar que la ecuación \ref{eq_2} se satisface para demostrar que el algoritmo \ref{trafico} encuentra la distancia del camino mínimo entre $s$ y $t$ dentro del conjunto de digrafos definido en la ecuación \ref{eq_1}.
+
+\begin{proof} 
+    Sea $D$ un digrafo $D = (V,\ E)$ con función de peso $w: E \to \mathbb{R}$ que no tiene ciclos negativos y sea  $\delta_G : E \to \mathbb{R}$ la distancia mínima entre cualquier par de vértices en un digrafo $G$ cualquiera.
+
+    Consideremos el digrafo $D+e$, con $e = (u,\ v)$, tal que $e$ es una arista entre dos vértices de $V$ que no está en $D$ y tiene peso $\ell$ no negativo. Si $e$ no pertenece a ningún camino mínimo de $s$ a $t$ en $D + e$, sigue trivialmente que  
+    \begin{equation*}
+        \delta_{D + e}(s,\ t) = \delta_{D}(s,\ t)
+    \end{equation*}
+    ya que $D \subset D + e$. Si, en cambio, sí pertenece, entonces debe ser que
+    \begin{equation*}
+        \delta_{D + e}(s,\ t) \leq \delta_{D}(s,\ t)
+    \end{equation*} 
+    ya que, o bien $e$ \textit{mejora} el camino mínimo entre ambos vértices, o bien lo mantiene igual, pero no puede suceder que lo empeore. Si no, dado que cualquier camino mínimo en $D$ está en $D + e$, el camino que contiene a $e$ no sería mínimo. 
+    
+    Del resultado anterior y, por la propiedad de \textit{subestructura óptima} del camino mínimo, sigue que
+    \begin{equation*}
+        \delta_{D + e}(s,\ t) = \begin{cases}
+            \delta_{D + e}(s,\ u) + \ell + \delta_{D + e}(v,\ t) &e \in\ C_{st}(D+e)\\
+            \delta_{D}(s,\ t) &\text{si no}
+        \end{cases}
+    \end{equation*}
+    donde $C_{st} \subset D + e$ es el subgrafo de caminos mínimos entre $s$ y $t$.
+
+    Dado que cualquier camino mínimo de $s$ a $u$ y cualquier camino mínimo de $v$ a $t$ en $D + e$ no puede contener a la arista $e$, ya que, si no, se formaría un ciclo, podemos concluir que $ \delta_{D + e}(s,\ u) = \delta_{D}(s,\ u) $ y $ \delta_{D + e}(v,\ t) = \delta_{D}(v,\ t)$. 
+    En consecuencia, 
+    \begin{equation*}
+        \delta_{D + e}(s,\ t) = \min\{\delta_{D}(s,\ u) + \ell + \delta_{D}(v,\ t),\ \delta_{D}(s,\ t)\}
+    \end{equation*}
+    como queríamos demostrar.
+\end{proof}
+    
 % complejidad
 \subsection{Complejidad temporal y espacial} 
