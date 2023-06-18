@@ -12,11 +12,11 @@ using namespace std;
 
 
 #if   SRC == 1
-#define PATH "./out/runtime_djikstra_fast.csv"
+#define PATH "./out/runtime_djikstra_fast_ralo.csv"
 #elif SRC == 2
-#define PATH "./out/runtime_djikstra_slow.csv"
+#define PATH "./out/runtime_djikstra_slow_ralo.csv"
 #elif SRC == 3
-#define PATH "./out/runtime_djikstra-queue.csv"
+#define PATH "./out/runtime_djikstra_queue_ralo.csv"
 #else
 #define PATH "./out/runtime.csv"
 #endif
@@ -26,21 +26,16 @@ using namespace std;
 // VARIABLES
 //
 
-#define REPEAT 10
-#define START 15000
-#define STOP 112492500
-#define STEP 11247750
-
-
-//
-// MEDICION
-//
+#define REPEAT 100
+#define START 10000
+#define STOP 100000
+#define STEP 10000
 
 vector<int> read_input(int size) {
-    vector<int> input(size*3 + 5); string file_name = "./inputs/input_" + to_string(size);
+    vector<int> input(size*6 + 5); string file_name = "./inputs/input_" + to_string(size);
     cout << file_name << endl;
     ifstream read_file(file_name);
-    for (int i=0; i<size*3 + 5; i++) read_file >> input[i];
+    for (int i=0; i<size*6 + 5; i++) read_file >> input[i];
     read_file.close();
     return input;
 }
@@ -62,30 +57,21 @@ double measure(const vector<vector<arista>>& D, const vector<vector<arista>>& T,
 int main(int argc, char** argv) {
     int repeat = REPEAT;
     ofstream output_file; output_file.open(PATH);
-    output_file << "m,time\n";
-    int n = 10000;
-    for (int m = START; m <= STOP; m += STEP) {
-        vector<int> input = read_input(m);
-        int N = input[0]; int M = input[1]; int K = input[2]; int s = input[3]; int t = input[4];
+    output_file << "n,time\n";
+    for (int n = START; n <= STOP; n += STEP) {
+        vector<int> input = read_input(n);
+        int N = n; int m = 2*n; int K = 0; int s = 1; int t = 2;
         s--; t--;
-        int indice = 5;
         vector<vector<arista>> D(N+1, vector<arista>()); // digrafo de entrada
         vector<vector<arista>> T(N+1, vector<arista>()); // digrafo transpuesto
         vector<arista> X; // calles a considerar
-        int a, b; double w;
-        for (int j = 0; j < M; ++j) {
-            a = input[indice]; b = input[indice+1]; w = input[indice+2];
-            indice += 3;
-            D[a].push_back((arista) {a, b, w});
-            T[b].push_back((arista) {b, a, w});
-        }
         double counter = 0;
         for (int ignore=0; ignore<repeat; ignore++) {
             counter += measure(D, T, X, s, t);
         }
         double avg = counter / repeat;
-        output_file << m << "," << avg << endl;
-        cout << m << ": " << avg << endl;
+        output_file << n << "," << avg << endl;
+        cout << n << ": " << avg << endl;
     }
 
     output_file.close();
