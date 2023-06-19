@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 #
 # GLOBAL
@@ -19,29 +20,50 @@ FN_QUEUE_RALO = "./out/runtime_djikstra_queue_ralo.csv"
 FN_INGENUO_RALO = "./out/runtime_djikstra_slow_ralo.csv"
 FN_HEAP_RALO_SMALL = "./out/runtime_djikstra_fast_ralo_small.csv"
 FN_QUEUE_RALO_SMALL = "./out/runtime_djikstra_queue_ralo_small.csv"
+
+
 #
-# DSU original
+# AUX
 #
+
+def expformat(x, pos):
+
+        if x == 0: return "$0$"
+
+        exponent = int(np.log10(x))
+        coeff = x/10**exponent
+
+        return r"${:2.0f} \times 10^{{ {:2d} }}$".format(coeff,exponent)
+
 
 def comparacion_triple():
 
     heap = pd.read_csv(FN_HEAP)
     queue = pd.read_csv(FN_QUEUE)
     ingenuo = pd.read_csv(FN_INGENUO)
+    
+    size = heap["m"] / 112492500
 
-    f, ax = plt.subplots(figsize=(10, 10))
-    ax.scatter(heap["m"], heap["time"], color='orange')
-    ax.plot(heap["m"], heap["time"], color='orange', label='heap')
-    ax.scatter(queue["m"], queue["time"])
-    ax.plot(queue["m"], queue["time"], color='red', label='queue')
-    ax.scatter(ingenuo["m"], ingenuo["time"])
-    ax.plot(ingenuo["m"], ingenuo["time"], label='ingenuo')
+    f, ax = plt.subplots(figsize=(5, 5))
+    ax.scatter(size, heap["time"], color='orange')
+    ax.plot(size, heap["time"], color='orange', label='heap')
+    ax.scatter(size, queue["time"])
+    ax.plot(size, queue["time"], color='red', label='queue')
+    ax.scatter(size, ingenuo["time"])
+    ax.plot(size, ingenuo["time"], label='ingenuo')
 
     ax.set_xscale("linear")
     ax.set_yscale("linear")
-    ax.set_xlabel("tamaño de la entrada", **config)
+    ax.set_xlabel("densidad (cantidad de aristas)", **config)
     ax.set_ylabel("tiempo (segundos)", **config)
     ax.tick_params(labelsize=16, size=10)
+
+    ax.text(-0.05, -0.1, r'$1.5 \times 10^4$', transform=ax.get_xaxis_transform(),
+            ha='left', va='top', fontsize=12, fontfamily='serif')
+    
+    ax.text(1.05, -0.1, r'$\approx 1.1 \times 10^8$', transform=ax.get_xaxis_transform(),
+            ha='right', va='top', fontsize=12, fontfamily='serif')
+
     ax.grid()
     ax.legend(fontsize="xx-large")
 
@@ -83,21 +105,23 @@ def comparacion_doble():
     heap = pd.read_csv(FN_HEAP_RALO)
     queue = pd.read_csv(FN_QUEUE_RALO)
 
-    f, ax = plt.subplots(figsize=(10, 10))
+    f, ax = plt.subplots(figsize=(5, 5))
     ax.scatter(heap["n"], heap["time"], color='orange')
-    ax.plot(heap["n"], heap["time"], color='orange', label='heap ralo')
+    ax.plot(heap["n"], heap["time"], color='orange', label='heap')
     ax.scatter(queue["n"], queue["time"])
-    ax.plot(queue["n"], queue["time"], color='red', label='queue ralo')
+    ax.plot(queue["n"], queue["time"], color='red', label='queue')
     
     
     ax.set_xscale("linear")
     ax.set_yscale("linear")
-    ax.set_xlabel("tamaño de la entrada", **config)
+    ax.set_xlabel("tamaño de la entrada (vértices)", **config)
     ax.set_ylabel("tiempo (segundos)", **config)
     ax.tick_params(labelsize=16, size=10)
     ax.grid()
     ax.legend(fontsize="xx-large")
-
+    #ax.xaxis.set_major_formatter(ticker.FuncFormatter(expformat))
+    #ax.tick_params(axis='x', labelsize=14)
+    
     f.savefig("./out/comparacion_rala_doble.png", bbox_inches='tight')
 
     # r = np.corrcoef(df['time'], df['n'])[0][1]
@@ -109,21 +133,23 @@ def comparacion_small():
     queue = pd.read_csv(FN_QUEUE_RALO_SMALL)
     ingenuo = pd.read_csv(FN_INGENUO_RALO)
 
-    f, ax = plt.subplots(figsize=(10, 10))
+    f, ax = plt.subplots(figsize=(5, 5))
     ax.scatter(heap["n"], heap["time"], color='orange')
-    ax.plot(heap["n"], heap["time"], color='orange', label='heap ralo')
+    ax.plot(heap["n"], heap["time"], color='orange', label='heap')
     ax.scatter(queue["n"], queue["time"])
-    ax.plot(queue["n"], queue["time"], color='red', label='queue ralo small')
+    ax.plot(queue["n"], queue["time"], color='red', label='queue')
     ax.scatter(ingenuo["n"], ingenuo["time"])
-    ax.plot(ingenuo["n"], ingenuo["time"], label='ingenuo ralo small')
+    ax.plot(ingenuo["n"], ingenuo["time"], label='ingenuo')
 
     ax.set_xscale("linear")
     ax.set_yscale("log")
-    ax.set_xlabel("tamaño de la entrada", **config)
-    ax.set_ylabel("log(tiempo (segundos))", **config)
+    ax.set_xlabel("tamaño de la entrada (vértices)", **config)
+    ax.set_ylabel("tiempo (segundos)", **config)
     ax.tick_params(labelsize=16, size=10)
     ax.grid()
-    ax.legend(fontsize="xx-large")
+    ax.legend(fontsize="xx-large", loc=(0.5, 0.55))
+    #ax.xaxis.set_major_formatter(ticker.FuncFormatter(expformat))
+    #ax.tick_params(axis='x', labelsize=14)
 
     f.savefig("./out/comparacion_rala_small.png", bbox_inches='tight')
 
@@ -138,6 +164,6 @@ def comparacion_small():
 if __name__ == "__main__":
 
     comparacion_triple()
-    comparacion_rala()
+    #comparacion_rala()
     comparacion_doble()
     comparacion_small()

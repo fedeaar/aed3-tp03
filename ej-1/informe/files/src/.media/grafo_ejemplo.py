@@ -200,7 +200,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
 
     nx.draw_networkx_nodes(G, pos, ax=ax, node_color="lightgray")
-    nx.draw_networkx_labels(G, pos, ax=ax, font_color="black")
+    nx.draw_networkx_labels(G, pos, ax=ax, font_color="black", font_size=14)
 
     rad = 0.2
     nx.draw_networkx_edges(G, pos, ax=ax, edgelist=edge_list)   
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     edge_type = nx.get_edge_attributes(G, 's')
     curved_edge_labels = {edge: edge_weights[edge] for edge in edge_type if edge_type[edge]==0}
     straight_edge_labels = {edge: edge_weights[edge] for edge in edge_type if edge_type[edge]==1}
-    my_draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=curved_edge_labels, rotate=False,rad=rad, font_color='gray')
-    my_draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=straight_edge_labels,rotate=False)
+    my_draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=curved_edge_labels, rotate=False,rad=rad, font_color='gray', font_size=14)
+    my_draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=straight_edge_labels,rotate=False, font_size=14)
     
     fig.savefig("grafo.png", bbox_inches='tight',pad_inches=0)
