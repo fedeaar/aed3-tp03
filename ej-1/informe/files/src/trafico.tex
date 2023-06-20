@@ -14,12 +14,12 @@ Por ejemplo, si tuvieramos la siguiente ciudad ---cuyas calles candidatas están
     %\caption{s} \label{ejemplo}
 \end{figure}
     
-\noindent entonces podríamos construir la calle $2 \leftrightarrow 3$ con peso $5$ para lograr un camino $1 \to 2 \to 3 \to 4$ con distancia mínima $35$.
+\noindent entonces podríamos construir la calle $2 \leftrightarrow 3$ de longitud $5$ para lograr un recorrido mínimo $1 \to 2 \to 3 \to 4$ de largo $35$.
 
 % modelado
 \subsection{Modelado como un problema de camino mínimo}\label{modelo} 
 
-A partir del ejemplo anterior, vemos que el problema del \textit{tráfico} se puede modelar de manera intuitiva como un problema de \textit{camino minimo} en grafos: sea $D$ el digrafo asociado a una ciudad $(V,\ E)$ y sea $w: E \to \mathbb{R}_{\geq 0}$ una función de peso, donde $w(c_i) = \ell^c_i$, $c_i \in E$ para todo $1 \leq i \leq m$, y $w(p_i) = \ell^p_i$, $p_i \in P$ para todo $1 \leq i \leq k$. Luego, podemos resolver el problema del \textit{tráfico} si evaluamos el camino mínimo entre $s$ y $t$ para cada digrafo en la sucesión
+A partir del ejemplo anterior, vemos que el problema del \textit{tráfico} se puede modelar de manera intuitiva como un problema de \textit{camino minimo} en grafos: sea $D$ el digrafo asociado a una ciudad $(V,\ E)$ y sea $w: E \to \mathbb{R}_{+}$ una función de peso, donde $w(c_i) = \ell^c_i$, $c_i \in E$ para todo $1 \leq i \leq m$, y $w(p_i) = \ell^p_i$, $p_i \in P$ para todo $1 \leq i \leq k$. Luego, podemos resolver el problema del \textit{tráfico} si evaluamos el mínimo entre todos los caminos mínimos entre $s$ y $t$ para cada digrafo en la sucesión
 \begin{equation}\label{eq_1}
     \{D\} \cup \{(V,\ E \cup \{e,\ \bar{e}\}) : e \in P\}
 \end{equation}
@@ -48,7 +48,7 @@ El mismo aplica un algoritmo de \textit{camino mínimo con única fuente} sobre 
 % correctitud
 \subsection{Demostración de correctitud}\label{correctitud}  
 
-Dada la discusión anterior, basta demostrar que la ecuación \ref{eq_2} se satisface para demostrar que el algoritmo \ref{trafico} encuentra la distancia del camino mínimo entre $s$ y $t$ dentro del conjunto de digrafos definido en la ecuación \ref{eq_1}.
+Dada la discusión anterior, basta demostrar que la ecuación \ref{eq_2} se satisface para demostrar que el algoritmo \ref{trafico} encuentra la distancia del camino mínimo entre $s$ y $t$ dentro del conjunto de digrafos definido por la ecuación \ref{eq_1}.
 
 \begin{proof} 
     Sea $D$ un digrafo $D = (V,\ E)$ con función de peso $w: E \to \mathbb{R}$ que no tiene ciclos negativos y sea  $\delta_G : E \to \mathbb{R}$ la distancia mínima entre cualquier par de vértices en un digrafo $G$ cualquiera.
@@ -61,7 +61,7 @@ Dada la discusión anterior, basta demostrar que la ecuación \ref{eq_2} se sati
     \end{equation*} 
     ya que, o bien $e$ \textit{mejora} el camino mínimo entre ambos vértices, o bien lo mantiene igual, pero no puede suceder que lo empeore. Si no, dado que cualquier camino mínimo en $D$ está en $D + e$, el camino que contiene a $e$ no sería mínimo. 
     
-    Del resultado anterior y, por la propiedad de \textit{subestructura óptima} del camino mínimo, sigue que
+    Del resultado anterior, y por la propiedad de \textit{subestructura óptima} del camino mínimo, sigue que
     \begin{equation}\label{eq_3}
         \delta_{D + e}(s,\ t) = \begin{cases}
             \delta_{D + e}(s,\ u) + \ell + \delta_{D + e}(v,\ t) &\text{si}\ e \in\ C_{st}(D+e)\\

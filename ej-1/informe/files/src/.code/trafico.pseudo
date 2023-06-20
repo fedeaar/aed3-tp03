@@ -1,7 +1,7 @@
-proc trafico(D: $(V,\ E)$, P: sec$<V \times V \times \mathbb{R}_{\geq 0}>$, w: $E \to \mathbb{R}_{\geq 0}$, s, t: $V$)-> $\mathbb{R}_{\geq 0}$:
+proc trafico(D: $(V,\ E)$, P: sec$<V \times V \times \mathbb{R}_{+}>$, w: $E \to \mathbb{R}_{+}$, s, t: $V$)-> $\mathbb{R}_{+}$:
     $\delta^s$ <- camino_minimo(D, w, s)
     $\delta^t$ <- camino_minimo(D$^t$, w, t)
-    $\mu$ <- $\delta^s$(t)
+    $\mu$ <- $\delta^s$[t]
     para (u, v, $\ell$) en P:
         $\gamma_1$ <- $\delta^s$[u] + $\ell$ + $\delta^t$[v]  // s $\rightsquigarrow$ u -> v $\rightsquigarrow$ t
         $\gamma_2$ <- $\delta^s$[v] + $\ell$ + $\delta^t$[u]  // s $\rightsquigarrow$ v -> u $\rightsquigarrow$ t
