@@ -12,11 +12,11 @@ using namespace std;
 
 
 #if   SRC == 1
-#define PATH "./out/runtime_djikstra_fast_ralo.csv"
+#define PATH "./out/runtime_djikstra_fast_ralo_small.csv"
 #elif SRC == 2
-#define PATH "./out/runtime_djikstra_slow_ralo.csv"
+#define PATH "./out/runtime_djikstra_slow_ralo_small.csv"
 #elif SRC == 3
-#define PATH "./out/runtime_djikstra_queue_ralo.csv"
+#define PATH "./out/runtime_djikstra_queue_ralo_small.csv"
 #else
 #define PATH "./out/runtime.csv"
 #endif
@@ -27,9 +27,9 @@ using namespace std;
 //
 
 #define REPEAT 100
-#define START 1000000
-#define STOP 10000000
-#define STEP 1000000
+#define START 10000
+#define STOP 100000
+#define STEP 10000
 
 vector<int> read_input(int size) {
     vector<int> input(size*6 + 5); string file_name = "./inputs/input_" + to_string(size);

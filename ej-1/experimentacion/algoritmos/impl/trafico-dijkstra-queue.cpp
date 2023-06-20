@@ -2,7 +2,13 @@
 #include <limits>
 #include <iostream>
 #include <queue>
+
 using namespace std;
+
+
+//
+// GLOBAL
+//
 
 double INF = numeric_limits<double>::infinity();
 struct arista {
@@ -16,7 +22,11 @@ struct entrada {
 };
 
 
-vector<double> djikstra(const vector<vector<arista>>& G, int s) {
+//
+// DIJKSTRA
+//
+
+vector<double> dijkstra(const vector<vector<arista>>& G, int s) {
     int n = G.size();
     vector<double> D(n, INF); D[s] = 0; // distancias
     queue<entrada> q; q.push(entrada{s,0});
@@ -41,8 +51,8 @@ vector<double> djikstra(const vector<vector<arista>>& G, int s) {
 //
 
 double resolver(const vector<vector<arista>>& D, const vector<vector<arista>>& T, const vector<arista>& X, int s, int t) {
-    vector<double> Ds = djikstra(D, s);
-    vector<double> Tt = djikstra(T, t);
+    vector<double> Ds = dijkstra(D, s);
+    vector<double> Tt = dijkstra(T, t);
     double min = Ds[t];
     for (const arista& x : X) {
         if (Ds[x.a] + x.w + Tt[x.b] < min) // s --> a -> b --> t
@@ -52,4 +62,3 @@ double resolver(const vector<vector<arista>>& D, const vector<vector<arista>>& T
     }
     return min == INF ? -1 : min;
 }
-

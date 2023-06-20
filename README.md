@@ -39,3 +39,48 @@ $ make
 ```bash
 $ ./ej-i
 ```
+
+
+<br>
+
+### Cómo crear los archivos ejecutables de la experimentación
+
+Para este procedimiento se asume que trabajaremos en bash. Desde la raiz del repo procederemos de la siguiente forma.
+
+1. Para crear los ejecutables de la experimentación
+
+```bash
+$ cd ej-1/experimentacion/
+
+$ mkdir build
+
+$ cd build
+
+$ cmake ..
+
+$ make
+```
+
+2. Para ejecutar cada experimento (desde la carpeta ./ej-3/experimentacion/)
+
+```bash
+# generamos los casos de test y directorios
+
+$ python generar_instancias.py
+
+$ python generar_instancias_ralas.py
+
+# ejecutamos
+
+$ ./build/exp-dijkstra-fast # heap
+$ ./build/exp-dijkstra-slow # ingenuo
+$ ./build/exp-dijkstra-queue
+
+$ ./build/exp-dijkstra-fast-ralo 
+$ ./build/exp-dijkstra-slow-ralo 
+$ ./build/exp-dijkstra-queue-ralo
+
+$ ./build/exp-dijkstra-fast-ralo-small 
+$ ./build/exp-dijkstra-slow-ralo-small
+$ ./build/exp-dijkstra-queue-ralo-small
+```

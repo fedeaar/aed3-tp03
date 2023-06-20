@@ -1,5 +1,6 @@
 #include <vector>
 #include <limits>
+
 using namespace std;
 
 
@@ -18,6 +19,11 @@ struct arista {
     double w; // peso
 };
 
+
+//
+// DIJKSTRA
+//
+
 entrada extract_min(vector<entrada>& Q, vector<int>& I) {
     entrada min = Q[0];
     for (int i = 0; i < Q.size(); i++) {
@@ -29,7 +35,6 @@ entrada extract_min(vector<entrada>& Q, vector<int>& I) {
     Q.pop_back();
     return min;
 }
-
 
 vector<double> dijkstra(const vector<vector<arista>>& G, int s) {
     int n = G.size();
@@ -71,4 +76,3 @@ double resolver(const vector<vector<arista>>& D, const vector<vector<arista>>& T
     }
     return min == INF ? -1 : min;
 }
-

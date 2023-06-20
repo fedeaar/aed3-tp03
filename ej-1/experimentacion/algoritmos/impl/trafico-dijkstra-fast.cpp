@@ -128,5 +128,3 @@ double resolver(const vector<vector<arista>>& D, const vector<vector<arista>>& T
     }
     return min == INF ? -1 : min;
 }
-
-

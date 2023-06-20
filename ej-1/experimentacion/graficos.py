@@ -35,7 +35,6 @@ def expformat(x, pos):
 
         return r"${:2.0f} \times 10^{{ {:2d} }}$".format(coeff,exponent)
 
-
 def comparacion_triple():
 
     heap = pd.read_csv(FN_HEAP)
@@ -72,6 +71,8 @@ def comparacion_triple():
     # r = np.corrcoef(df['time'], df['n'])[0][1]
     # print("El coeficiente de correlación de Pearson para la muestra optimizada es: r="+str(r))
 
+    return
+
 def comparacion_rala():
 
     heap = pd.read_csv(FN_HEAP_RALO)
@@ -98,7 +99,8 @@ def comparacion_rala():
 
     # r = np.corrcoef(df['time'], df['n'])[0][1]
     # print("El coeficiente de correlación de Pearson para la muestra optimizada es: r="+str(r))
-
+    
+    return
 
 def comparacion_doble():
 
@@ -126,6 +128,8 @@ def comparacion_doble():
 
     # r = np.corrcoef(df['time'], df['n'])[0][1]
     # print("El coeficiente de correlación de Pearson para la muestra optimizada es: r="+str(r))
+
+    return
 
 def comparacion_small():
 
@@ -155,6 +159,8 @@ def comparacion_small():
 
     # r = np.corrcoef(df['time'], df['n'])[0][1]
     # print("El coeficiente de correlación de Pearson para la muestra optimizada es: r="+str(r))
+
+    return
 
 
 #
